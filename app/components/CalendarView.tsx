@@ -1,7 +1,6 @@
 "use client"
 import React, { useState } from 'react';
 import Modal from '../components/Modal';
-import DailyPractice from './DailyPractice';
 import MonthlyReflection from './MonthlyReflections';
 
 const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
