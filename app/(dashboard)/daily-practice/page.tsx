@@ -1,5 +1,5 @@
 "use client"
-"use client";
+import Image from 'next/image'; // Import the Image component from next/image
 import MoodTracker from '../../components/MoodTracker';
 import ActionButtons from '../../components/ActionButtons';
 import Gratitude from '../../components/Gratitude';
@@ -9,14 +9,30 @@ import PhotoUpload from '../../components/PhotoUpload';
 
 export default function DailyPractice() {
   return (
-    <div className="flex justify-center items-center min-h-screen my-12"> {/* Ensures full viewport height and centers children */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start w-full max-w-4xl p-8 bg-white rounded-lg shadow-xl">
-        <div className="flex flex-col md:col-span-1">
-          <PhotoUpload />
-        </div>   
-        <div className="flex flex-col md:col-span-1">
-          <Gratitude />
-        </div>
+    <div className="flex flex-col items-center justify-center min-h-screen my-12 px-4 py-12 sm:px-12 lg:px-14">
+      <div className="w-full max-w-4xl p-12 bg-white rounded-lg shadow-2xl">
+        <h2
+          className="col-span-full text-center text-7xl my-10 font-semibold"
+          style={{
+            backgroundImage: 'url("/images/dailypractice-header.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            padding: '60px 0',
+            margin: '0 0 60px 0', // Adjust the margin as needed
+            borderRadius: '80px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
+          }}
+        >
+          Daily Practice
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          <div className="flex flex-col md:col-span-1">
+            <PhotoUpload />
+          </div>
+          <div className="flex flex-col md:col-span-1">
+            <Gratitude />
+          </div>
           <div className="md:col-span-2">
             <DailyReflections />
           </div>
@@ -27,7 +43,7 @@ export default function DailyPractice() {
             <ActionButtons />
           </div>
         </div>
+      </div>
     </div>
   );
 }
-

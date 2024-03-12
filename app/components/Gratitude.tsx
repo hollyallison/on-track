@@ -4,10 +4,10 @@ import React from 'react'
   const GratitudeList = () => {
         return (
           <>
-            <label htmlFor="gratitude-list" className="block mt-6 text-sm font-medium text-gray-900">
+            <label htmlFor="gratitude-list" className="block my-6 text-2xl font-semibold text-gray-900">
               Gratitude List
             </label>
-            <p className="mt-1 text-sm text-gray-600">I am so truly grateful for...</p>
+            <p className=" text-sm text-gray-600">I am so truly grateful for...</p>
             <textarea
               id="gratitude-list"
               rows={10}
