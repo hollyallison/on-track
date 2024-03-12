@@ -1,17 +1,16 @@
-
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import MonthlyReflection from '../components/MonthlyReflections';
+import MonthlyReflectionsComponent from '../../components/MonthlyReflections'; // Renamed import
 
 const MonthlyReflections: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Daily Practice - On Track Journal</title>
-        <meta name="description" content="Monthly Reflection" />
+        <title>Monthly Reflections - On Track Journal</title> {/* Updated title to match the content */}
+        <meta name="description" content="Reflect on your month with On Track Journal." /> {/* More descriptive content */}
       </Head>
       <main className="container mx-auto p-4">
-        <MonthlyReflections />
+        <MonthlyReflectionsComponent /> {/* Updated to use the renamed import */}
       </main>
     </>
   );
