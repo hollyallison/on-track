@@ -89,19 +89,43 @@ function KanbanBoard() {
 
   return (
     <div
-      className=" text-gray-800 
-      flex flex-col w-full
-       bg-white rounded-lg shadow-2xl 
-       m-auto p-8 overflow-auto">
-       <h1 className="text-gray-800 font-bold pb-5">{goals.length > 0 ? goals[0].title : "No Goals Found"}</h1>
+    className="text-gray-800 flex flex-col w-full bg-white rounded-lg shadow-md m-auto p-8 overflow-auto"
+  >
+    <div className="flex justify-between items-center">
+      <h1 className="text-gray-800 font-bold">
+        {goals.length > 0 ? goals[0].title : "No Goals Found"}
+      </h1>
+      <button
+        onClick={createNewColumn}
+        className="
+          h-[30px]
+          w-[175px]
+          min-w-[200px]
+          cursor-pointer
+          rounded-lg
+          border-2
+          p-4
+          ring-blue-500
+          hover:ring-2
+          flex
+          gap-2
+          items-center
+          justify-center
+          text-gray-800
+          "
+      >
+        <PlusIcon className="h-5 w-5" />
+        Add Column
+      </button>
+    </div>
       <DndContext 
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
         onDragOver={onDragOver}
       >
-        <div className="m-auto flex gap-4">
-          <div className="flex gap-4">
+        <div className="m-5 flex gap-6">
+          <div className="flex gap-8 text-md  text-gray-800 mb-4">
             <SortableContext items={columnsId}>
               {columns.map((col) => (
                 <KanbanColumn
@@ -117,27 +141,7 @@ function KanbanBoard() {
               ))}
             </SortableContext>
           </div>
-          <button
-            onClick={() => {
-              createNewColumn();
-            }}
-            className="
-      h-[60px]
-      w-[350px]
-      min-w-[350px]
-      cursor-pointer
-      rounded-lg
-      border-2
-      p-4
-      ring-blue-500
-      hover:ring-2
-      flex
-      gap-2
-      "
-          >
-            <PlusIcon />
-            Add Column
-          </button>
+         
         </div>
 
         {createPortal(

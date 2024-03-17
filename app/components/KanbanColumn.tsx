@@ -108,6 +108,7 @@ function ColumnContainer({
       flex
       items-center
       justify-between
+      hover:shadow-lg transition-all duration-300
       "
       >
         <div className="flex gap-2">
@@ -124,7 +125,9 @@ function ColumnContainer({
           {!editMode && column.title}
           {editMode && (
             <input
-              className="bg-white focus:border-rose-500 border rounded outline-none px-2"
+              className="bg-white border rounded outline-none px-2 focus:outline-none
+              focus:ring-0
+              focus:shadow-none"
               value={column.title}
               onChange={(e) => updateColumn(column.id, e.target.value)}
               autoFocus
@@ -156,7 +159,7 @@ function ColumnContainer({
       </div>
 
       {/* Column Card Container */}
-      <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
+      <div className="flex flex-grow flex-col gap-4 p-6 overflow-x-hidden overflow-y-auto">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
             <KanbanCard
@@ -171,7 +174,7 @@ function ColumnContainer({
 
       {/* Create Task Button */}
       <button
-        className="flex gap-2 items-center  border-gray-200 border-2 rounded-md p-4  hover:bg-mainBackgroundColor hover:text-green-500 active:bg-black"
+        className="flex gap-2 items-center border-gray-200 border-2 rounded-md p-4   hover:text-green-500 active:bg-green text-black"
         onClick={() => {
           createTask(column.id);
         }}
