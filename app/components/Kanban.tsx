@@ -35,7 +35,7 @@ const defaultCols: Column[] = [
 const defaultGoals: Goal[] = [
   {
     id: "1",
-    title: "Get Driving License",
+    title: "Goal 1",
   },
   {
     id: "2",
@@ -51,20 +51,20 @@ const defaultTasks: Task[] = [
     id: "1",
     columnId: "todo",
     goalId: "1",
-    content: "Do 4 hours of lessons a week",
+    content: "Milestone 1",
   },
   {
     id: "2",
     columnId: "todo",
     goalId: "1",
     content:
-      "Find driving instructor",
+      "Milestone 2",
   },
   {
     id: "3",
     columnId: "doing",
     goalId: "1",
-    content: "Save for lessons",
+    content: "Milestone 3",
   },
   
 ];
