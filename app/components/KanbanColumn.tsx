@@ -78,11 +78,10 @@ function ColumnContainer({
     <div
       ref={setNodeRef}
       style={style}
-      className="
-  bg-columnBackgroundColor
+      className="bg-gray-50
   w-[350px]
   h-[500px]
-  max-h-[500px]
+  max-h-[800px]
   rounded-md
   flex
   flex-col
@@ -96,15 +95,15 @@ function ColumnContainer({
           setEditMode(true);
         }}
         className="
-      bg-mainBackgroundColor
-      text-md
+        bg-gray-50
+        text-gray-700
       h-[60px]
       cursor-grab
       rounded-md
       rounded-b-none
       p-3
       font-bold
-      border-columnBackgroundColor
+      border-gray-200
       border-4
       flex
       items-center
@@ -115,21 +114,17 @@ function ColumnContainer({
           <div
             className="
         flex
-        justify-center
-        items-center
-        bg-columnBackgroundColor
         px-2
         py-1
-        text-sm
         rounded-full
         "
           >
-            0
+          
           </div>
           {!editMode && column.title}
           {editMode && (
             <input
-              className="bg-black focus:border-rose-500 border rounded outline-none px-2"
+              className="bg-white focus:border-rose-500 border rounded outline-none px-2"
               value={column.title}
               onChange={(e) => updateColumn(column.id, e.target.value)}
               autoFocus
@@ -150,7 +145,7 @@ function ColumnContainer({
           className="
         stroke-gray-500
         hover:stroke-white
-        hover:bg-columnBackgroundColor
+        hover:bg-red-500
         rounded
         px-1
         py-2
@@ -160,7 +155,7 @@ function ColumnContainer({
         </button>
       </div>
 
-      {/* Column task container */}
+      {/* Column Card Container */}
       <div className="flex flex-grow flex-col gap-4 p-2 overflow-x-hidden overflow-y-auto">
         <SortableContext items={tasksIds}>
           {tasks.map((task) => (
@@ -173,9 +168,10 @@ function ColumnContainer({
           ))}
         </SortableContext>
       </div>
-      {/* Column footer */}
+
+      {/* Create Task Button */}
       <button
-        className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
+        className="flex gap-2 items-center  border-gray-200 border-2 rounded-md p-4  hover:bg-mainBackgroundColor hover:text-green-500 active:bg-black"
         onClick={() => {
           createTask(column.id);
         }}

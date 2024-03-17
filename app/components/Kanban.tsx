@@ -1,7 +1,7 @@
 "use client"
 import PlusIcon from "../icons/PlusIcon";
 import { useMemo, useState } from "react";
-import { Column, Id, Task } from "../task";
+import { Column, Id, Task, Goal} from "../task";
 import KanbanColumn from "./KanbanColumn";
 import {
   DndContext,
@@ -32,22 +32,39 @@ const defaultCols: Column[] = [
   },
 ];
 
+const defaultGoals: Goal[] = [
+  {
+    id: "1",
+    title: "Get Driving License",
+  },
+  {
+    id: "2",
+    title: "Learn to Code",
+  },
+  {
+    id: "3",
+    title: "Eat healthier",
+  },
+];
 const defaultTasks: Task[] = [
   {
     id: "1",
     columnId: "todo",
-    content: "List admin APIs for dashboard",
+    goalId: "1",
+    content: "Do 4 hours of lessons a week",
   },
   {
     id: "2",
     columnId: "todo",
+    goalId: "1",
     content:
-      "Develop user registration functionality with OTP delivered on SMS after email confirmation and phone number confirmation",
+      "Find driving instructor",
   },
   {
     id: "3",
     columnId: "doing",
-    content: "Conduct security testing",
+    goalId: "1",
+    content: "Save for lessons",
   },
   
 ];
@@ -55,7 +72,7 @@ const defaultTasks: Task[] = [
 function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>(defaultCols);
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-
+  const [goals, setGoals] = useState<Goal[]>(defaultGoals);
   const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
@@ -72,17 +89,12 @@ function KanbanBoard() {
 
   return (
     <div
-      className="
-      text-gray-800
-        m-auto
-        flex
-        min-h-screen
-        w-full
-        items-center
-        px-[40px] 
-    "
-    >
-      <DndContext
+      className=" text-gray-800 
+      flex flex-col w-full
+       bg-white rounded-lg shadow-2xl 
+       m-auto p-8 overflow-auto">
+       <h1 className="text-gray-800 font-bold pb-5">{goals.length > 0 ? goals[0].title : "No Goals Found"}</h1>
+      <DndContext 
         sensors={sensors}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
@@ -115,11 +127,9 @@ function KanbanBoard() {
       min-w-[350px]
       cursor-pointer
       rounded-lg
-      bg-mainBackgroundColor
       border-2
-      border-columnBackgroundColor
       p-4
-      ring-rose-500
+      ring-blue-500
       hover:ring-2
       flex
       gap-2
