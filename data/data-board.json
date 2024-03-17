@@ -1,0 +1,35 @@
+export const cardData = [
+{
+    
+    "goals": [
+      {
+        "id": "goal1",
+        "title": "Learn TypeScript",
+        "milestones": [
+          {
+            "id": "milestone1",
+            "title": "Understand basic types",
+            "deadline": "2024-01-01",
+            "status": "planned",
+            "details": "Details about this milestone..."
+          }
+        ]
+      },
+      {
+        "id": "goal2",
+        "title": "Learn to Drive",
+        "milestones": [
+          {
+            "id": "milestone1",
+            "title": "Find driving instructor",
+            "deadline": "2024-05-07",
+            "status": "todo",
+            "details": "Details about this milestone..."
+          }
+        ]
+      },
+    ]
+  } ]
+
+
+  

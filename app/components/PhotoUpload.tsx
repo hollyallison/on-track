@@ -5,7 +5,6 @@ import { PhotoIcon } from '@heroicons/react/24/solid';
     const PhotoUpload: React.FC = () => {
         return (
             <div>
-            
             <h2 className='my-8 text-2xl font-semibold text-gray-900'> Photo of the Day</h2>
           <div className="mb-8 p-6 bg-gray-100 rounded-lg border border-dashed border-gray-200">
             <div className="flex flex-col items-center justify-center ">

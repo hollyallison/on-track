@@ -17,11 +17,12 @@ export default function DailyPractice() {
             backgroundImage: 'url("/images/dailypractice-header.jpg")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            padding: '60px 0',
+            padding: '65px 0',
             margin: '0 0 60px 0', // Adjust the margin as needed
             borderRadius: '80px',
             boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
+            opacity: '70%',
           }}
         >
           Daily Practice

@@ -50,7 +50,7 @@ const Calendar: React.FC = () => {
       <Modal isOpen={modalIsOpen} onRequestClose={closeModal}>
         {renderModalContent()}
       </Modal>
-      {content === 'daily' && <DailyPractice />}
+      {content === 'daily' && <daily-practice />}
       {content === 'monthly' && <MonthlyReflection />}
     </div>
   );
