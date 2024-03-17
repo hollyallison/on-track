@@ -10,8 +10,9 @@ const MyGoals: NextPage = () => {
         <meta name="description" content="Set and track your goals with On Track Journal." />
       </Head>
       <main className="container mx-auto p-4">
+
       <h2
-          className="col-span-full text-center text-7xl my-10 font-semibold"
+          className="col-span-full text-center text-7xl my-96 font-semibold"
           style={{
             backgroundImage: 'url("/images/dailypractice-header.jpg")',
             backgroundSize: 'cover',
@@ -26,7 +27,9 @@ const MyGoals: NextPage = () => {
         >
           My Goals
         </h2>
-        <Kanban />
+   
+        < Kanban />
+    
       </main>
     </>
   );

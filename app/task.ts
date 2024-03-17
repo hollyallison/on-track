@@ -5,8 +5,15 @@ export type Column = {
   title: string;
 };
 
+export type Goal = {
+  id: Id;
+  title: string;
+};
+
 export type Task = {
   id: Id;
   columnId: Id;
+  goalId: Id;
   content: string;
 };
+

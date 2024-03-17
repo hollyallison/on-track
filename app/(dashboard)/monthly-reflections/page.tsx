@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import MonthlyReflectionsComponent from '../../components/MonthlyReflections'; // Renamed import
+import ActionButtons from '@/app/components/ActionButtons';
 
 const MonthlyReflections: NextPage = () => {
   return (
@@ -10,7 +11,9 @@ const MonthlyReflections: NextPage = () => {
         <meta name="description" content="Reflect on your month with On Track Journal." /> {/* More descriptive content */}
       </Head>
       <main className="container mx-auto p-4">
-        <MonthlyReflectionsComponent /> {/* Updated to use the renamed import */}
+        <MonthlyReflectionsComponent /> 
+        <ActionButtons /> 
+       
       </main>
     </>
   );

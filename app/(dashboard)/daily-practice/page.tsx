@@ -12,7 +12,7 @@ export default function DailyPractice() {
     <div className="flex flex-col items-center justify-center min-h-screen my-12 px-4 py-12 sm:px-12 lg:px-14">
       <div className="w-full max-w-4xl p-12 bg-white rounded-lg shadow-2xl">
         <h2
-          className="col-span-full text-center text-7xl my-10 font-semibold"
+          className="col-span-full text-center text-7xl my-6 font-semibold"
           style={{
             backgroundImage: 'url("/images/dailypractice-header.jpg")',
             backgroundSize: 'cover',

@@ -114,7 +114,7 @@ function KanbanBoard() {
           text-gray-800
           "
       >
-        <PlusIcon className="h-5 w-5" />
+        <PlusIcon/>
         Add Column
       </button>
     </div>
@@ -178,6 +178,7 @@ function KanbanBoard() {
       id: generateId(),
       columnId,
       content: `Task ${tasks.length + 1}`,
+      goalId: ""
     };
 
     setTasks([...tasks, newTask]);
