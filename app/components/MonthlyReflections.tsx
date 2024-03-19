@@ -1,4 +1,6 @@
 import React from 'react';
+import ActionButtons from './ActionButtons';
+import DatePicker from './DatePicker';
 
 const MonthlyReflection: React.FC = () => {
   return (
@@ -33,6 +35,8 @@ const MonthlyReflection: React.FC = () => {
         <div>
           <label htmlFor="measurement" className="block text-lg font-medium text-gray-700 mb-2">How will I measure my progress?</label>
           <textarea id="measurement" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
+       <DatePicker />
+       <ActionButtons />
         </div>
       </div>
     </div>

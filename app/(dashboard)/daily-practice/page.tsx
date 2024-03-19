@@ -1,13 +1,17 @@
 "use client"
+import { useState } from 'react';
 import Image from 'next/image'; // Import the Image component from next/image
 import MoodTracker from '../../components/MoodTracker';
 import ActionButtons from '../../components/ActionButtons';
 import Gratitude from '../../components/Gratitude';
 import DailyReflections from '../../components/DailyReflections';
 import PhotoUpload from '../../components/PhotoUpload';
+import DatePicker from '@/app/components/DatePicker';
+
 
 
 export default function DailyPractice() {
+  const [selectedDate, setSelectedDate] = useState(new Date());
   return (
     <div className="flex flex-col items-center justify-center min-h-screen my-12 px-4 py-12 sm:px-12 lg:px-14">
       <div className="w-full max-w-4xl p-12 bg-white rounded-lg shadow-2xl">
@@ -41,7 +45,8 @@ export default function DailyPractice() {
             <MoodTracker />
           </div>
           <div className="md:col-span-2 flex justify-end">
-            <ActionButtons />
+          <DatePicker />
+          <ActionButtons />
           </div>
         </div>
       </div>

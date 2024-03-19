@@ -1,5 +1,4 @@
-import React from 'react'
-
+import React from "react";
 
   const DailyReflections: React.FC = () => {
     return (
@@ -14,6 +13,7 @@ import React from 'react'
           className="w-full mt-2 text-sm text-gray-900 placeholder-gray-400 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           placeholder="Your reflections..."
         ></textarea>
+        
       </div>
     ); }
   export default DailyReflections
