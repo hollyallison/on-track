@@ -1,44 +1,69 @@
-import React from 'react';
+import React, { useState , FormEvent } from 'react';
+import axios from 'axios';
+import CustomDatePicker from './CustomDatePicker';
 import ActionButtons from './ActionButtons';
-import DatePicker from './DatePicker';
+
+type ReflectionsState = {
+  [key: string]: string;
+};
+
+const reflectionQuestions = [
+  { title: 'Achievements and Progress', key: 'progess' },
+  { title: 'Challenges and Solutions', key: 'challenges' },
+  {title: 'Goal Alignment' , key: 'alignment'},
+  {title: 'Motivation and Morale' , key: 'motivation'},
+  {title: 'Looking ahead' , key: 'lookingAhead'},
+];
 
 const QuarterlyReflection: React.FC = () => {
+  const [reflections, setReflections] = useState<ReflectionsState>(reflectionQuestions.reduce((acc: ReflectionsState, question) => {
+    acc[question.key] = '';
+    return acc;
+  }, {}));
+  const [date, setDate] = useState<Date>(new Date());
+
+  
+  const handleDateChange = (selectedDate: Date | null): void => {
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+  };
+
+  const handleChange = (key: string, value: string) => {
+    setReflections(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => { 
+    e.preventDefault();
+    const reflectionToSubmit = {
+      date,
+      type: 'Quarterly',
+      questions: reflectionQuestions.map(question => ({
+        key: question.key,
+        title: question.title,
+        text: reflections[question.key],
+      }))
+    };
+  
+    try {
+      await axios.post('/api/reflections', reflectionToSubmit);
+      // Handle success
+    } catch (error) {
+      // Handle error
+    }
+  };
+
   return (
-    <div className="p-6 bg-blue-50 border rounded-lg shadow-sm">
-      
-      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Quarterly Reflections</h2>
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="progress" className="block text-lg font-medium text-gray-700 mb-2">Achievements and Progress</label>
-          <p> Think about..  key accomplishments, how these align with you goals. Any new skill or knowledge you have gained. Time management: any milestones that took longer than expected?</p>
-          <textarea id="progress" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
+    <form onSubmit={handleSubmit}>
+      <CustomDatePicker onChange={handleDateChange} selectedDate={date} />
+      {reflectionQuestions.map(question => (
+        <div key={question.key}>
+          <label htmlFor={question.key} className="block text-lg font-medium text-gray-700 mb-2">{question.title}</label>
+          <textarea id={question.key} value={reflections[question.key]} onChange={(e) => handleChange(question.key, e.target.value)} className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
         </div>
-        <div>
-          <label htmlFor="challenges" className="block text-lg font-medium text-gray-700 mb-2">Challenges and Solutions</label>
-          <p> Think about.. did you face any challeges? how did you overcome these. Are there any unresolved challenges that a new approach?</p>
-          <textarea id="challenges" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-        <div>
-          <label htmlFor="Alignment" className="block text-lg font-medium text-gray-700 mb-2">Goal Alignment</label>
-          <p> Think about.. are the goals i set still relevant? Do you need to change any. Do your current goals reflect your priorities. Has anything new shifted your focus?</p>
-          <textarea id="Alignment" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-        <div>
-          <label htmlFor="motivation" className="block text-lg font-medium text-gray-700 mb-2">Motivation and Morale</label>
-          <p> What has kept you motivated or caused loss of motivation, how to maintain/improve this going forward</p>
-          <textarea id="motivation" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-        <div>
-          <label htmlFor="lookingAhead" className="block text-lg font-medium text-gray-700 mb-2">Looking ahead</label>
-          <p>What goals and milestones are your priority going forward? What steps do you need to take to ensure you are on track?</p>
-          <textarea id="lookingAhead" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-      </div>
-       <DatePicker />
-       <ActionButtons />
-        </div>
-      
-    
+      ))}
+     <ActionButtons />
+    </form>
   );
 };
 

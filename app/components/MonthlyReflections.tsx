@@ -1,47 +1,97 @@
-import React from 'react';
-import ActionButtons from './ActionButtons';
-import DatePicker from './DatePicker';
+import React, { useState, FormEvent } from 'react';
+import axios from 'axios';
+import CustomDatePicker from './CustomDatePicker';
+
+// Assuming ActionButtons is a functional component receiving onSave and onCancel as props
+const ActionButtons = ({ onSave, onCancel }) => (
+  <div className="mt-4">
+    <button type="button" onClick={onSave} className="mr-2 p-2 bg-blue-500 text-white rounded">Save</button>
+    <button type="button" onClick={onCancel} className="p-2 bg-gray-500 text-white rounded">Cancel</button>
+  </div>
+);
+
+type ReflectionsState = {
+  [key: string]: string;
+};
+
+const reflectionQuestions = [
+  { title: 'What successes have I achieved recently?', key: 'successes' },
+  { title: 'What lessons have I learned?', key: 'lessons' },
+  { title: 'How am I feeling about my process?', key: 'feelings' },
+  { title: 'What milestones am I going to work on this month?', key: 'milestones' },
+  { title: 'What are the key actions needed to achieve these?', key: 'actions' },
+  { title: 'How will I measure my progress?', key: 'measurement' },
+];
 
 const MonthlyReflection: React.FC = () => {
-  return (
-    <div className="p-6 bg-blue-50 border rounded-lg shadow-sm">
-      
-      <h2 className="text-2xl font-semibold text-gray-700 mb-4">Monthly Reflections</h2>
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="successes" className="block text-lg font-medium text-gray-700 mb-2">What successes have I achieved recently?</label>
-          <textarea id="successes" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-        <div>
-          <label htmlFor="lessons" className="block text-lg font-medium text-gray-700 mb-2">What lessons have I learned?</label>
-          <textarea id="lessons" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-        <div>
-          <label htmlFor="feelings" className="block text-lg font-medium text-gray-700 mb-2">How am I feeling about my process?</label>
-          <textarea id="feelings" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-      </div>
+  const [reflections, setReflections] = useState<ReflectionsState>(reflectionQuestions.reduce((acc: ReflectionsState, question) => {
+    acc[question.key] = '';
+    return acc;
+  }, {}));
+  
+  const [date, setDate] = useState<Date>(new Date());
 
-      <h2 className="text-2xl font-semibold text-gray-700 mb-4 mt-8">Plan for Month Ahead</h2>
-      <div className="space-y-6">
-        <div>
-          <label htmlFor="milestones" className="block text-lg font-medium text-gray-700 mb-2">What milestones am I going to work on this month?</label>
-          <textarea id="milestones" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
+  const handleDateChange = (selectedDate: Date | null): void => {
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+  };
+
+  const handleChange = (key: string, value: string) => {
+    setReflections(prev => ({ ...prev, [key]: value }));
+  };
+
+  const submitReflection = async () => {
+    const payload = {
+      date: date,
+      reflections: Object.keys(reflections).map((key) => ({
+        key: key,
+        title: reflectionQuestions.find((q) => q.key === key)?.title || '',
+        text: reflections[key],
+      })),
+    };
+  
+    try {
+      await axios.post('/api/Reflections', payload);
+      console.log('Reflection submitted successfully');
+      // Here you might want to navigate the user to another page or clear the form
+    } catch (error) {
+      console.error('Failed to submit reflection:', error);
+      // Error handling here
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await submitReflection();
+  };
+
+  const handleSave = async () => {
+    await submitReflection();
+  };
+
+  const handleCancel = () => {
+    console.log('Cancel action triggered');
+    // Example reset (simplified):
+    setReflections(reflectionQuestions.reduce((acc: ReflectionsState, question) => {
+      acc[question.key] = '';
+      return acc;
+    }, {}));
+    setDate(new Date()); // Reset date to current
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <CustomDatePicker onChange={handleDateChange} selectedDate={date} />
+      {reflectionQuestions.map(question => (
+        <div key={question.key} className="mb-4">
+          <label htmlFor={question.key} className="block text-lg font-medium text-gray-700 mb-2">{question.title}</label>
+          <textarea id={question.key} value={reflections[question.key]} onChange={(e) => handleChange(question.key, e.target.value)} className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
         </div>
-        <div>
-          <label htmlFor="actions" className="block text-lg font-medium text-gray-700 mb-2">What are the key actions needed to achieve these?</label>
-          <textarea id="actions" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-        </div>
-        <div>
-          <label htmlFor="measurement" className="block text-lg font-medium text-gray-700 mb-2">How will I measure my progress?</label>
-          <textarea id="measurement" className="w-full p-4 text-gray-700 bg-white border border-gray-200 rounded-md" rows={4} />
-       <DatePicker />
-       <ActionButtons />
-        </div>
-      </div>
-    </div>
+      ))}
+      <ActionButtons onSave={handleSave} onCancel={handleCancel} />
+    </form>
   );
 };
 
 export default MonthlyReflection;
-

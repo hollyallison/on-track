@@ -6,7 +6,7 @@ import ActionButtons from '../../components/ActionButtons';
 import Gratitude from '../../components/Gratitude';
 import DailyReflections from '../../components/DailyReflections';
 import PhotoUpload from '../../components/PhotoUpload';
-import DatePicker from '@/app/components/DatePicker';
+import DatePicker from '@/app/components/CustomDatePicker';
 
 
 
