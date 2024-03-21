@@ -1,7 +1,11 @@
 import React from 'react'
 
+interface ActionButtonsProps {
+  onSave: () => void;
+  onCancel: () => void;
+}
 
-const ActionButtons: React.FC<{ onSave: () => void; onCancel: () => void }> = ({ onSave, onCancel }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ onSave, onCancel }) => {
   return (
     <div className="flex justify-end mt-4">
       <button

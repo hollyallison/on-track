@@ -1,26 +1,19 @@
 import React, { useState, FormEvent } from 'react';
 import axios from 'axios';
 import CustomDatePicker from './CustomDatePicker';
-
-// Assuming ActionButtons is a functional component receiving onSave and onCancel as props
-const ActionButtons = ({ onSave, onCancel }) => (
-  <div className="mt-4">
-    <button type="button" onClick={onSave} className="mr-2 p-2 bg-blue-500 text-white rounded">Save</button>
-    <button type="button" onClick={onCancel} className="p-2 bg-gray-500 text-white rounded">Cancel</button>
-  </div>
-);
+import ActionButtons from './ActionButtons';
 
 type ReflectionsState = {
   [key: string]: string;
 };
 
 const reflectionQuestions = [
-  { title: 'What successes have I achieved recently?', key: 'successes' },
-  { title: 'What lessons have I learned?', key: 'lessons' },
-  { title: 'How am I feeling about my process?', key: 'feelings' },
-  { title: 'What milestones am I going to work on this month?', key: 'milestones' },
-  { title: 'What are the key actions needed to achieve these?', key: 'actions' },
-  { title: 'How will I measure my progress?', key: 'measurement' },
+  { title: 'What successes have I achieved recently?', key: 'successes', type: 'Monthly' },
+  { title: 'What lessons have I learned?', key: 'lessons', type: 'Monthly'},
+  { title: 'How am I feeling about my process?', key: 'feelings', type: 'Monthly'},
+  { title: 'What milestones am I going to work on this month?', key: 'milestones', type: 'Monthly'},
+  { title: 'What are the key actions needed to achieve these?', key: 'actions', type: 'Monthly'},
+  { title: 'How will I measure my progress?', key: 'measurement', type: 'Monthly'},
 ];
 
 const MonthlyReflection: React.FC = () => {
@@ -43,8 +36,9 @@ const MonthlyReflection: React.FC = () => {
 
   const submitReflection = async () => {
     const payload = {
-      date: date,
-      reflections: Object.keys(reflections).map((key) => ({
+      date: date.toISOString(),
+      type: "Monthly", // Ensure this is correct or dynamically set based on your application's needs
+      questions: Object.keys(reflections).map((key) => ({
         key: key,
         title: reflectionQuestions.find((q) => q.key === key)?.title || '',
         text: reflections[key],
@@ -52,32 +46,35 @@ const MonthlyReflection: React.FC = () => {
     };
   
     try {
-      await axios.post('/api/Reflections', payload);
-      console.log('Reflection submitted successfully');
-      // Here you might want to navigate the user to another page or clear the form
+      await axios.post('/api/Reflections', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      // Consider adding a success feedback mechanism here (e.g., a success message to the user)
     } catch (error) {
       console.error('Failed to submit reflection:', error);
-      // Error handling here
+      // Consider adding an error feedback mechanism here (e.g., an error message to the user)
     }
-  };
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    await submitReflection();
   };
 
   const handleSave = async () => {
     await submitReflection();
+    // Implement additional logic if needed upon successful save, such as redirecting the user or showing a success message
   };
 
   const handleCancel = () => {
     console.log('Cancel action triggered');
-    // Example reset (simplified):
     setReflections(reflectionQuestions.reduce((acc: ReflectionsState, question) => {
       acc[question.key] = '';
       return acc;
     }, {}));
-    setDate(new Date()); // Reset date to current
+    setDate(new Date());
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await handleSave();
   };
 
   return (
