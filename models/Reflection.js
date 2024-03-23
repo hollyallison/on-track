@@ -1,4 +1,3 @@
-// models/Reflection.js
 import mongoose from 'mongoose';
 
 const questionSchema = new mongoose.Schema({
@@ -9,7 +8,7 @@ const questionSchema = new mongoose.Schema({
 
 const reflectionSchema = new mongoose.Schema({
   date: { type: Date, required: true },
-  type: { type: String, required: true, enum: ['Monthly', 'Quarterly'] },
+  type: { type: String, required: true, enum: ['Daily', 'Monthly', 'Quarterly'] },
   questions: [questionSchema]
 }, { timestamps: true });
 

@@ -34,7 +34,7 @@ const [selectedDate, setSelectedDate] = useState(new Date());
           <DailyReflections />
           <MoodTracker />
           <CustomDatePicker onChange={handleDateChange} selectedDate={selectedDate} />
-          <ActionButtons />
+          
         </div>
       </div>
     </>

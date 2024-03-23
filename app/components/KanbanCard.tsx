@@ -4,10 +4,13 @@ import { Id, Task } from "../task";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+// In KanbanCard.tsx
+
 interface Props {
   task: Task;
   deleteTask: (id: Id) => void;
   updateTask: (id: Id, content: string) => void;
+  refreshData: () => void; // Add this line
 }
 
 function TaskCard({ task, deleteTask, updateTask }: Props) {
