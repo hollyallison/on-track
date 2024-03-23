@@ -37,7 +37,7 @@ const MonthlyReflection: React.FC = () => {
   const submitReflection = async () => {
     const payload = {
       date: date.toISOString(),
-      type: "Monthly", // Ensure this is correct or dynamically set based on your application's needs
+      type: "Monthly", 
       questions: Object.keys(reflections).map((key) => ({
         key: key,
         title: reflectionQuestions.find((q) => q.key === key)?.title || '',
@@ -53,6 +53,7 @@ const MonthlyReflection: React.FC = () => {
       });
       // Consider adding a success feedback mechanism here (e.g., a success message to the user)
     } catch (error) {
+      console.log('Reflection submission successful');
       console.error('Failed to submit reflection:', error);
       // Consider adding an error feedback mechanism here (e.g., an error message to the user)
     }
