@@ -1,93 +1,314 @@
 "use client"
-import React, { useState, useEffect } from 'react';
-import PlusIcon from '../icons/PlusIcon';
-import KanbanColumn from './KanbanColumn';
+import PlusIcon from "../icons/PlusIcon";
+import { useMemo, useState } from "react";
+import { Column, Id, Task, Goal} from "../task";
+import KanbanColumn from "./KanbanColumn";
 import {
-  fetchColumns,
-  fetchTasks,
-  createColumn,
-  createTaskForColumn,
-  deleteColumn,
-  updateColumnTitle,
-} from '../../pages/api/utils'; // Adjust the import path as necessary
+  DndContext,
+  DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { createPortal } from "react-dom";
+import KanbanCard from "./KanbanCard";
 
-const KanbanBoard = () => {
-  const [columns, setColumns] = useState([]);
-  const [boardId, setBoardId] = useState('yourBoardIdHere'); // Placeholder. Adjust as needed to dynamically set or fetch the board ID.
+const defaultCols: Column[] = [
+  {
+    id: "todo",
+    title: "To Do",
+  },
+  {
+    id: "doing",
+    title: "In progress",
+  },
+  {
+    id: "done",
+    title: "Completed",
+  },
+];
 
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const fetchedColumns = await fetchColumns(boardId);
-        setColumns(fetchedColumns);
-      } catch (error) {
-        console.error('Failed to fetch initial data:', error);
-      }
-    };
+const defaultGoals: Goal[] = [
+  {
+    id: "1",
+    title: "Goal 1",
+  },
+  {
+    id: "2",
+    title: "Learn to Code",
+  },
+  {
+    id: "3",
+    title: "Eat healthier",
+  },
+];
+const defaultTasks: Task[] = [
+  {
+    id: "1",
+    columnId: "todo",
+    goalId: "1",
+    content: "Milestone 1",
+  },
+  {
+    id: "2",
+    columnId: "todo",
+    goalId: "1",
+    content:
+      "Milestone 2",
+  },
+  {
+    id: "3",
+    columnId: "doing",
+    goalId: "1",
+    content: "Milestone 3",
+  },
+  
+];
 
-    fetchInitialData();
-  }, [boardId]);
+function KanbanBoard() {
+  const [columns, setColumns] = useState<Column[]>(defaultCols);
+  const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+  const [goals, setGoals] = useState<Goal[]>(defaultGoals);
+  const [tasks, setTasks] = useState<Task[]>(defaultTasks);
 
-  const handleAddColumn = async () => {
-    try {
-      const newColumnTitle = `New Column ${columns.length + 1}`;
-      const newColumn = await createColumn(boardId, newColumnTitle);
-      setColumns([...columns, newColumn]);
-    } catch (error) {
-      console.error('Failed to add column:', error);
-    }
-  };
+  const [activeColumn, setActiveColumn] = useState<Column | null>(null);
 
-  const handleDeleteColumn = async (columnId) => {
-    try {
-      await deleteColumn(boardId, columnId);
-      setColumns(columns.filter((column) => column.id !== columnId));
-    } catch (error) {
-      console.error('Failed to delete column:', error);
-    }
-  };
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  const handleUpdateColumn = async (columnId, newTitle) => {
-    try {
-      await updateColumnTitle(boardId, columnId, newTitle);
-      const updatedColumns = columns.map((column) =>
-        column.id === columnId ? { ...column, title: newTitle } : column
-      );
-      setColumns(updatedColumns);
-    } catch (error) {
-      console.error('Failed to update column:', error);
-    }
-  };
-
-  const handleAddTask = async (columnId, taskContent) => {
-    try {
-      const newTask = await createTaskForColumn(boardId, columnId, { content: taskContent });
-      // Here you might want to fetch columns again to refresh the tasks, or implement a local update logic.
-    } catch (error) {
-      console.error('Failed to add task:', error);
-    }
-  };
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10,
+      },
+    })
+  );
 
   return (
-    <div className="kanban-board">
-      <div className="header">
-        <button onClick={handleAddColumn}>
-          <PlusIcon /> Add Column
-        </button>
-      </div>
-      <div className="columns-container">
-        {columns.map((column) => (
-          <KanbanColumn
-            key={column.id}
-            column={column}
-            onDeleteColumn={() => handleDeleteColumn(column.id)}
-            onUpdateColumn={(newTitle) => handleUpdateColumn(column.id, newTitle)}
-            onAddTask={handleAddTask}
-          />
-        ))}
-      </div>
+    <div
+    className="text-gray-800 flex flex-col w-full bg-white rounded-lg shadow-md m-auto p-8 overflow-auto"
+  >
+    <div className="flex justify-between items-center">
+      <h1 className="text-gray-800 font-bold">
+        {goals.length > 0 ? goals[0].title : "No Goals Found"}
+      </h1>
+      <button
+        onClick={createNewColumn}
+        className="
+          h-[30px]
+          w-[175px]
+          min-w-[200px]
+          cursor-pointer
+          rounded-lg
+          border-2
+          p-4
+          ring-blue-500
+          hover:ring-2
+          flex
+          gap-2
+          items-center
+          justify-center
+          text-gray-800
+          "
+      >
+        <PlusIcon/>
+        Add Column
+      </button>
+    </div>
+      <DndContext 
+        sensors={sensors}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        onDragOver={onDragOver}
+      >
+        <div className="m-5 flex gap-6">
+          <div className="flex gap-8 text-md  text-gray-800 mb-4">
+            <SortableContext items={columnsId}>
+              {columns.map((col) => (
+                <KanbanColumn
+                  key={col.id}
+                  column={col}
+                  deleteColumn={deleteColumn}
+                  updateColumn={updateColumn}
+                  createTask={createTask}
+                  deleteTask={deleteTask}
+                  updateTask={updateTask}
+                  tasks={tasks.filter((task) => task.columnId === col.id)}
+                />
+              ))}
+            </SortableContext>
+          </div>
+         
+        </div>
+
+        {createPortal(
+          <DragOverlay>
+            {activeColumn && (
+              <KanbanColumn
+                column={activeColumn}
+                deleteColumn={deleteColumn}
+                updateColumn={updateColumn}
+                createTask={createTask}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+                tasks={tasks.filter(
+                  (task) => task.columnId === activeColumn.id
+                )}
+              />
+            )}
+            {activeTask && (
+              <KanbanCard
+                task={activeTask}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
+              />
+            )}
+          </DragOverlay>,
+          document.body
+        )}
+      </DndContext>
     </div>
   );
-};
+
+  function createTask(columnId: Id) {
+    const newTask: Task = {
+      id: generateId(),
+      columnId,
+      content: `Task ${tasks.length + 1}`,
+      goalId: ""
+    };
+
+    setTasks([...tasks, newTask]);
+  }
+
+  function deleteTask(id: Id) {
+    const newTasks = tasks.filter((task) => task.id !== id);
+    setTasks(newTasks);
+  }
+
+  function updateTask(id: Id, content: string) {
+    const newTasks = tasks.map((task) => {
+      if (task.id !== id) return task;
+      return { ...task, content };
+    });
+
+    setTasks(newTasks);
+  }
+
+  function createNewColumn() {
+    const columnToAdd: Column = {
+      id: generateId(),
+      title: `Column ${columns.length + 1}`,
+    };
+
+    setColumns([...columns, columnToAdd]);
+  }
+
+  function deleteColumn(id: Id) {
+    const filteredColumns = columns.filter((col) => col.id !== id);
+    setColumns(filteredColumns);
+
+    const newTasks = tasks.filter((t) => t.columnId !== id);
+    setTasks(newTasks);
+  }
+
+  function updateColumn(id: Id, title: string) {
+    const newColumns = columns.map((col) => {
+      if (col.id !== id) return col;
+      return { ...col, title };
+    });
+
+    setColumns(newColumns);
+  }
+
+  function onDragStart(event: DragStartEvent) {
+    if (event.active.data.current?.type === "Column") {
+      setActiveColumn(event.active.data.current.column);
+      return;
+    }
+
+    if (event.active.data.current?.type === "Task") {
+      setActiveTask(event.active.data.current.task);
+      return;
+    }
+  }
+
+  function onDragEnd(event: DragEndEvent) {
+    setActiveColumn(null);
+    setActiveTask(null);
+
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveAColumn = active.data.current?.type === "Column";
+    if (!isActiveAColumn) return;
+
+    console.log("DRAG END");
+
+    setColumns((columns) => {
+      const activeColumnIndex = columns.findIndex((col) => col.id === activeId);
+
+      const overColumnIndex = columns.findIndex((col) => col.id === overId);
+
+      return arrayMove(columns, activeColumnIndex, overColumnIndex);
+    });
+  }
+
+  function onDragOver(event: DragOverEvent) {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id;
+    const overId = over.id;
+
+    if (activeId === overId) return;
+
+    const isActiveATask = active.data.current?.type === "Task";
+    const isOverATask = over.data.current?.type === "Task";
+
+    if (!isActiveATask) return;
+
+    // Dropping a Task over another Task
+    if (isActiveATask && isOverATask) {
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t.id === activeId);
+        const overIndex = tasks.findIndex((t) => t.id === overId);
+
+        if (tasks[activeIndex].columnId != tasks[overIndex].columnId) {
+          tasks[activeIndex].columnId = tasks[overIndex].columnId;
+          return arrayMove(tasks, activeIndex, overIndex - 1);
+        }
+
+        return arrayMove(tasks, activeIndex, overIndex);
+      });
+    }
+
+    const isOverAColumn = over.data.current?.type === "Column";
+
+    // Dropping a Task over a column
+    if (isActiveATask && isOverAColumn) {
+      setTasks((tasks) => {
+        const activeIndex = tasks.findIndex((t) => t.id === activeId);
+
+        tasks[activeIndex].columnId = overId;
+        console.log("DROPPING TASK OVER COLUMN", { activeIndex });
+        return arrayMove(tasks, activeIndex, activeIndex);
+      });
+    }
+  }
+}
+
+function generateId() {
+  /* Generate a random number between 0 and 10000 */
+  return Math.floor(Math.random() * 10001);
+}
 
 export default KanbanBoard;
