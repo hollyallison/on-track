@@ -33,8 +33,10 @@ const QuarterlyReflection: React.FC = () => {
     setReflections(prev => ({ ...prev, [key]: value }));
   };
 
-  const submitReflection = async () => {
+  const submitReflection = async (userId: string, goalId: string) => {
     const payload = {
+      userId,
+      goalId,
       date: date.toISOString(),
       type: "Quarterly", 
       questions: Object.keys(reflections).map((key) => ({

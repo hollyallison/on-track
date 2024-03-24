@@ -28,7 +28,8 @@ const MyGoals: NextPage = () => {
           My Goals
         </h2>
    
-        < Kanban />
+        <Kanban  />
+
     
       </main>
     </>
