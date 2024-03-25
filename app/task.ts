@@ -1,20 +1,27 @@
-export type Id = string | number;
+export type Id = string;
 
-export type Column = {
+export interface ITask {
   id: Id;
   title: string;
-  tasks: Task[];
-};
+  description?: string;
+  status: 'To Do' | 'In Progress' | 'Done';
+  content?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
-export type Goal = {
+export interface IColumn {
   id: Id;
   title: string;
-};
+  tasks: ITask[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
-export type Task = {
+export interface IKanbanBoard {
   id: Id;
-  columnId: Id;
-  goalId: Id;
-  content: string;
-};
-
+  name: string;
+  columns: IColumn[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}

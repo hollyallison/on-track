@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import Kanban from '../../components/Kanban';
+import KanbanBoard from '../../components/KanbanBoard';
+
 
 const MyGoals: NextPage = () => {
   return (
@@ -28,7 +29,7 @@ const MyGoals: NextPage = () => {
           My Goals
         </h2>
    
-        <Kanban  />
+        <KanbanBoard />
 
     
       </main>

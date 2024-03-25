@@ -33,10 +33,8 @@ const QuarterlyReflection: React.FC = () => {
     setReflections(prev => ({ ...prev, [key]: value }));
   };
 
-  const submitReflection = async (userId: string, goalId: string) => {
+  const submitReflection = async () => {
     const payload = {
-      userId,
-      goalId,
       date: date.toISOString(),
       type: "Quarterly", 
       questions: Object.keys(reflections).map((key) => ({
@@ -59,7 +57,7 @@ const QuarterlyReflection: React.FC = () => {
       // Consider adding an error feedback mechanism here (e.g., an error message to the user)
     }
   };
-
+ ;
   const handleSave = async () => {
     await submitReflection();
     // Implement additional logic if needed upon successful save, such as redirecting the user or showing a success message
