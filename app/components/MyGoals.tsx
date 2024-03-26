@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import Kanban from './Kanban';
+import KanbanBoard from './KanbanBoard';
 
 
 
@@ -8,7 +8,7 @@ import Kanban from './Kanban';
 
 export default function MyGoals() {
   return (
-  <Kanban />
+  <KanbanBoard />
   )
 }
 

@@ -12,15 +12,18 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "baseUrl": ".",
     "paths": {
+      "@/lib/*": ["lib/*"],
+      "@/models/*": ["models/*"],
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/(dashboard)/daily-practice", "tailwind.config.js", "lib/db.js"],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.js", "lib/db.js"],
+  "exclude": ["node_modules"],
+  "plugins": [
+    {
+      "name": "next"
+    }
+  ]
 }

@@ -1,3 +1,4 @@
+// pages/api/Columns/index.js
 import dbConnect from '../../../lib/db';
 import Column from '../../../models/Column';
 import Board from '../../../models/Board'; 

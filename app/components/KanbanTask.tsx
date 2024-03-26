@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import TrashIcon from "../icons/TrashIcon";
 import { Task } from "../task";
 import { useSortable } from "@dnd-kit/sortable";
@@ -6,23 +6,16 @@ import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
   task: Task;
-  onTaskDelete: (id: string) => void; 
-  onTaskUpdate: () => void; 
+  onTaskDelete: (id: string) => void;
+  onTaskUpdate: (taskId: string, newContent: string) => void;
 }
 
-function TaskCard({ task, onTaskDelete, onTaskUpdate }: Props) {
-  const [mouseIsOver, setMouseIsOver] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [content, setContent] = useState(task.description);
+const TaskCard: React.FC<Props> = ({ task, onTaskDelete, onTaskUpdate }) => {
+  const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [content, setContent] = useState<string>(task.description || "");
 
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
     id: task.id,
   });
 
@@ -32,28 +25,18 @@ function TaskCard({ task, onTaskDelete, onTaskUpdate }: Props) {
   };
 
   const toggleEditMode = () => {
-    setEditMode((prev) => !prev);
+    setEditMode(!editMode);
     setMouseIsOver(false);
   };
 
-  const updateTask = async () => {
+  const handleUpdateTask = () => {
     if (content !== task.description) {
-      await fetch(`/api/tasks/${task.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content }),
-      });
-      onTaskUpdate(); 
+      onTaskUpdate(task.id, content);
     }
     toggleEditMode();
   };
 
-  const deleteTask = async () => {
-    await fetch(`/api/Tasks/${task.id}`, {
-      method: 'DELETE',
-    });
+  const handleDeleteTask = () => {
     onTaskDelete(task.id);
   };
 
@@ -75,23 +58,23 @@ function TaskCard({ task, onTaskDelete, onTaskUpdate }: Props) {
           value={content}
           autoFocus
           placeholder="Task content here"
-          onBlur={updateTask}
+          onBlur={handleUpdateTask}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && e.shiftKey) {
-              updateTask();
+            if (e.key === "Enter" && !e.shiftKey) {
+              handleUpdateTask();
             }
           }}
         />
       ) : (
-        <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap text-center" onClick={toggleEditMode}>
+        <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap text-center" onDoubleClick={toggleEditMode}>
           {content}
         </p>
       )}
 
       {mouseIsOver && (
         <button
-          onClick={deleteTask}
+          onClick={handleDeleteTask}
           className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-400 p-2 rounded opacity-60 hover:opacity-100"
         >
           <TrashIcon />
@@ -99,6 +82,6 @@ function TaskCard({ task, onTaskDelete, onTaskUpdate }: Props) {
       )}
     </div>
   );
-}
+};
 
 export default TaskCard;

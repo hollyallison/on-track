@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 const goalSchema = new mongoose.Schema({
   title: { type: String, required: true },
 }, { timestamps: true });

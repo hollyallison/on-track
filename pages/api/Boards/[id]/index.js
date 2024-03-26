@@ -1,5 +1,7 @@
-import dbConnect from '../../../lib/db';
-import Board from '../../../models/Board';
+// pages/api/Boards/[id]/index.js
+
+import dbConnect from '@/lib/db';
+import Board from '@/models/Board';
 
 export default async function handler(req, res) {
   const {
