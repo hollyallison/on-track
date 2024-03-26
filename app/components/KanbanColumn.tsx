@@ -1,186 +1,94 @@
-import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { useState, useEffect } from "react";
 import TrashIcon from "../icons/TrashIcon";
-import { Column, Id, Task } from "../task";
-import { CSS } from "@dnd-kit/utilities";
-import { useMemo, useState } from "react";
 import PlusIcon from "../icons/PlusIcon";
-import KanbanCard from "./KanbanCard";
+import KanbanTask from "./KanbanTask"; // Your task component
+import { Task, Column,} from '../task';
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
 interface Props {
   column: Column;
-  deleteColumn: (id: Id) => void;
-  updateColumn: (id: Id, title: string) => void;
-
-  createTask: (columnId: Id) => void;
-  updateTask: (id: Id, content: string) => void;
-  deleteTask: (id: Id) => void;
-  tasks: Task[];
+  onColumnUpdate: () => void; // Callback for parent component to handle updates
 }
 
-function ColumnContainer({
-  column,
-  deleteColumn,
-  updateColumn,
-  createTask,
-  tasks,
-  deleteTask,
-  updateTask,
-}: Props) {
+function ColumnContainer({ column, onColumnUpdate }: Props) {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [editMode, setEditMode] = useState(false);
 
-  const tasksIds = useMemo(() => {
-    return tasks.map((task) => task.id);
-  }, [tasks]);
+  useEffect(() => {
+    // Fetch tasks when the component mounts or the column changes
+    const fetchTasks = async () => {
+      const response = await fetch(`/api/tasks?columnId=${column.id}`);
+      const data = await response.json();
+      if (data.success) {
+        setTasks(data.data);
+      }
+    };
+    fetchTasks();
+  }, [column]);
 
-  const {
-    setNodeRef,
-    attributes,
-    listeners,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id: column.id,
-    data: {
-      type: "Column",
-      column,
-    },
-    disabled: editMode,
-  });
+  // Sensors for drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor)
+  );
 
-  const style = {
-    transition,
-    transform: CSS.Transform.toString(transform),
+  const handleDragEnd = ({ active, over }) => {
+    if (active.id !== over.id) {
+      const oldIndex = tasks.findIndex(task => task.id === active.id);
+      const newIndex = tasks.findIndex(task => task.id === over.id);
+
+      const newTasks = arrayMove(tasks, oldIndex, newIndex);
+      setTasks(newTasks);
+      // Here you could also update the order in the backend
+    }
   };
 
-  if (isDragging) {
-    return (
-      <div
-        ref={setNodeRef}
-        style={style}
-        className="
-      bg-columnBackgroundColor
-      opacity-40
-      border-2
-      border-pink-500
-      w-[350px]
-      h-[500px]
-      max-h-[500px]
-      rounded-md
-      flex
-      flex-col
-      "
-      ></div>
-    );
-  }
+  const createTask = async () => {
+    const response = await fetch('/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ columnId: column.id, content: "New Task" }), // Adjust based on your task model
+    });
+    const newTask = await response.json();
+    if (newTask.success) {
+      setTasks([...tasks, newTask.data]);
+    }
+  };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="bg-gray-50
-  w-[350px]
-  h-[500px]
-  max-h-[800px]
-  rounded-md
-  flex
-  flex-col
-  "
-    >
-      {/* Column title */}
-      <div
-        {...attributes}
-        {...listeners}
-        onClick={() => {
-          setEditMode(true);
-        }}
-        className="
-        bg-gray-50
-        text-gray-700
-      h-[60px]
-      cursor-grab
-      rounded-md
-      rounded-b-none
-      p-3
-      font-bold
-      border-gray-200
-      border-4
-      flex
-      items-center
-      justify-between
-      hover:shadow-lg transition-all duration-300
-      "
-      >
-        <div className="flex gap-2">
-          <div
-            className="
-        flex
-        px-2
-        py-1
-        rounded-full
-        "
-          >
-          
-          </div>
-          {!editMode && column.title}
-          {editMode && (
-            <input
-              className="bg-white border rounded outline-none px-2 focus:outline-none
-              focus:ring-0
-              focus:shadow-none"
-              value={column.title}
-              onChange={(e) => updateColumn(column.id, e.target.value)}
-              autoFocus
-              onBlur={() => {
-                setEditMode(false);
-              }}
-              onKeyDown={(e) => {
-                if (e.key !== "Enter") return;
-                setEditMode(false);
-              }}
-            />
-          )}
-        </div>
-        <button
-          onClick={() => {
-            deleteColumn(column.id);
-          }}
-          className="
-        stroke-gray-500
-        hover:stroke-white
-        hover:bg-red-500
-        rounded
-        px-1
-        py-2
-        "
-        >
-          <TrashIcon />
+    <div className="bg-gray-50 w-[350px] h-auto max-h-[800px] rounded-md flex flex-col p-4">
+      <div className="flex items-center justify-between mb-4">
+        {!editMode ? (
+          <h2 onClick={() => setEditMode(true)} className="text-xl font-bold">{column.title}</h2>
+        ) : (
+          <input
+            type="text"
+            defaultValue={column.title}
+            onBlur={(e) => {
+              setEditMode(false);
+              // Update column title here
+            }}
+            autoFocus
+            className="text-xl font-bold"
+          />
+        )}
+        <button onClick={createTask} title="Add task">
+          <PlusIcon />
         </button>
       </div>
 
-      {/* Column Card Container */}
-      <div className="flex flex-grow flex-col gap-4 p-6 overflow-x-hidden overflow-y-auto">
-        <SortableContext items={tasksIds}>
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={tasks.map(task => task.id)} strategy={verticalListSortingStrategy}>
           {tasks.map((task) => (
-            <KanbanCard
-              key={task.id}
-              task={task}
-              deleteTask={deleteTask}
-              updateTask={updateTask}
-            />
+            <KanbanTask key={task.id} task={task} />
           ))}
         </SortableContext>
-      </div>
+      </DndContext>
 
-      {/* Create Task Button */}
-      <button
-        className="flex gap-2 items-center border-gray-200 border-2 rounded-md p-4   hover:text-green-500 active:bg-green text-black"
-        onClick={() => {
-          createTask(column.id);
-        }}
-      >
-        <PlusIcon />
-        Add task
+      <button onClick={() => {/* handle delete column */}} title="Delete column">
+        <TrashIcon />
       </button>
     </div>
   );

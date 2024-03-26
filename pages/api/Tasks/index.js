@@ -1,10 +1,8 @@
-// pages/api/tasks/index.js
 import dbConnect from '../../../lib/db'; 
 import Task from '../../../models/Task';
 
 export default async function handler(req, res) {
   const { method } = req;
-
   await dbConnect();
 
   switch (method) {
@@ -18,7 +16,7 @@ export default async function handler(req, res) {
       break;
     case 'POST':
       try {
-        const task = await Task.create(req.body); // Make sure to validate the input
+        const task = await Task.create(req.body);
         res.status(201).json({ success: true, data: task });
       } catch (error) {
         res.status(400).json({ success: false });

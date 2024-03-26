@@ -1,27 +1,33 @@
 export type Id = string;
 
-export interface ITask {
+export interface Task {
   id: Id;
   title: string;
   description?: string;
   status: 'To Do' | 'In Progress' | 'Done';
-  content?: string;
+  columnId: Id; // Links the task to a specific column.
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface IColumn {
+export interface Column {
   id: Id;
   title: string;
-  tasks: ITask[];
+  tasks: Task[];
   createdAt?: Date;
   updatedAt?: Date;
 }
 
-export interface IKanbanBoard {
+export interface KanbanBoard {
   id: Id;
   name: string;
-  columns: IColumn[];
+  columns: Id[]; // Array of column IDs.
+  goalId: Id; // Links the board to a specific goal.
   createdAt?: Date;
   updatedAt?: Date;
+}
+
+export interface Goal { 
+  id: Id;
+  title: string;
 }
