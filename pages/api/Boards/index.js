@@ -1,6 +1,8 @@
 // pages/api/Boards/index.js
 import dbConnect from '@/lib/db';
 import Board from '@/models/Board';
+import Column from '@/models/Column';
+import Task from '@/models/Task';
 
 export default async function handler(req, res) {
   await dbConnect();

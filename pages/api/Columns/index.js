@@ -1,7 +1,7 @@
 // pages/api/Columns/index.js
-import dbConnect from '../../../lib/db';
-import Column from '../../../models/Column';
-import Board from '../../../models/Board'; 
+import dbConnect from '@/lib/db';
+import Column from '@/models/Column';
+import Board from '@/models/Board'; 
 
 export default async function handler(req, res) {
   await dbConnect();

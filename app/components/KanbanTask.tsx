@@ -1,43 +1,74 @@
 import React, { useState } from "react";
-import TrashIcon from "../icons/TrashIcon";
-import { Task } from "../task";
-import { useSortable } from "@dnd-kit/sortable";
+import TrashIcon from "../icons/TrashIcon"; // Ensure this path is correct
 import { CSS } from "@dnd-kit/utilities";
+import { useSortable } from "@dnd-kit/sortable";
+
+interface Task {
+  _id: string;
+  content: string;
+}
 
 interface Props {
   task: Task;
-  onTaskDelete: (id: string) => void;
-  onTaskUpdate: (taskId: string, newContent: string) => void;
 }
 
-const TaskCard: React.FC<Props> = ({ task, onTaskDelete, onTaskUpdate }) => {
-  const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
-  const [editMode, setEditMode] = useState<boolean>(false);
-  const [content, setContent] = useState<string>(task.description || "");
-
-  const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
-    id: task.id,
+const TaskCard: React.FC<Props> = ({ task }) => {
+  const [editMode, setEditMode] = useState(false);
+  const [content, setContent] = useState(task.content);
+  
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: task._id,
   });
 
   const style = {
-    transition,
     transform: CSS.Transform.toString(transform),
+    transition,
   };
 
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-    setMouseIsOver(false);
-  };
+  const handleUpdateTask = async () => {
+    if (content.trim() && content !== task.content) {
+      try {
+        const response = await fetch(`/api/Tasks/${task._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ content: content.trim() }),
+        });
 
-  const handleUpdateTask = () => {
-    if (content !== task.description) {
-      onTaskUpdate(task.id, content);
+        if (!response.ok) {
+          throw new Error('Failed to update task');
+        }
+
+        const updatedTaskData = await response.json();
+        console.log('Task updated successfully', updatedTaskData);
+
+        // Reset edit mode
+        setEditMode(false);
+      } catch (error) {
+        console.error('Error updating task:', error);
+      }
+    } else {
+      // If no changes or content is only whitespace, just exit edit mode
+      setEditMode(false);
     }
-    toggleEditMode();
   };
 
-  const handleDeleteTask = () => {
-    onTaskDelete(task.id);
+  const handleDeleteTask = async () => {
+    try {
+      const response = await fetch(`/api/Tasks/${task._id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete task');
+      }
+
+      console.log('Task deleted successfully');
+      // Consider invoking a callback to remove the task from the parent component's state
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
   return (
@@ -46,40 +77,36 @@ const TaskCard: React.FC<Props> = ({ task, onTaskDelete, onTaskUpdate }) => {
       style={style}
       {...attributes}
       {...listeners}
-      onMouseEnter={() => setMouseIsOver(true)}
-      onMouseLeave={() => setMouseIsOver(false)}
-      className={`p-2.5 h-[100px] min-h-[100px] flex items-center text-center rounded-xl cursor-grab relative ${
-        isDragging ? "opacity-30 bg-blue-300 border-2" : "bg-gray-100 hover:ring-2 hover:ring-inset hover:ring-blue-500"
-      }`}
+      className={`task-card ${editMode ? 'edit-mode' : ''}`}
+      onMouseEnter={() => setEditMode(true)}
+      onMouseLeave={() => setEditMode(false)}
     >
       {editMode ? (
         <textarea
-          className="h-[90%] w-full resize-none border-none rounded bg-transparent text-gray-500 focus:outline-none focus:ring-0 focus:shadow-none"
+          className="task-edit-input"
           value={content}
           autoFocus
-          placeholder="Task content here"
-          onBlur={handleUpdateTask}
           onChange={(e) => setContent(e.target.value)}
+          onBlur={handleUpdateTask}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
               handleUpdateTask();
             }
           }}
         />
       ) : (
-        <p className="my-auto h-[90%] w-full overflow-y-auto overflow-x-hidden whitespace-pre-wrap text-center" onDoubleClick={toggleEditMode}>
+        <p className="task-content" onDoubleClick={() => setEditMode(true)}>
           {content}
         </p>
       )}
 
-      {mouseIsOver && (
-        <button
-          onClick={handleDeleteTask}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-red-400 p-2 rounded opacity-60 hover:opacity-100"
-        >
-          <TrashIcon />
-        </button>
-      )}
+      <button
+        onClick={handleDeleteTask}
+        className="delete-task-button"
+      >
+        <TrashIcon />
+      </button>
     </div>
   );
 };

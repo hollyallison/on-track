@@ -5,6 +5,5 @@ const columnSchema = new mongoose.Schema({
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Task' }],
 }, { timestamps: true });
 
-const Column = mongoose.model('Column', columnSchema);
-export default Column;
+export default mongoose.models.Column || mongoose.model('Column', columnSchema);
 

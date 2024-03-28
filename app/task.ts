@@ -1,9 +1,8 @@
 export type Id = string;
 
 export interface Task {
-  id: Id;
-  title: string;
-  description?: string;
+  _id: Id;
+  content: string;
   status: 'To Do' | 'In Progress' | 'Done';
   columnId: Id; // Links the task to a specific column.
   createdAt?: Date;
@@ -11,7 +10,7 @@ export interface Task {
 }
 
 export interface Column {
-  id: Id;
+  _id: string;
   title: string;
   tasks: Task[];
   createdAt?: Date;
@@ -19,15 +18,15 @@ export interface Column {
 }
 
 export interface KanbanBoard {
-  id: Id;
+  _id: Id;
   name: string;
-  columns: Id[]; // Array of column IDs.
-  goalId: Id; // Links the board to a specific goal.
+  columns: Id[]; 
+  goalId: Id; 
   createdAt?: Date;
   updatedAt?: Date;
 }
 
 export interface Goal { 
-  id: Id;
+  _id: Id;
   title: string;
 }

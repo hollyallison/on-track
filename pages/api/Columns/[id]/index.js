@@ -1,7 +1,7 @@
 // pages/api/Columns/[id]/index.js
-import dbConnect from '../../../lib/db';
-import Column from '../../../models/Column';
-import Task from '../../../models/Task';
+import dbConnect from '@/lib/db';
+import Column from '@/models/Column';
+import Task from '@/models/Task';
 
 export default async function handler(req, res) {
   const { query: { id }, method } = req;

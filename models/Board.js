@@ -13,4 +13,5 @@ if (mongoose.models.KanbanBoard) {
   KanbanBoard = mongoose.model('KanbanBoard', kanbanBoardSchema);
 }
 
-export default KanbanBoard;
+export default KanbanBoard = mongoose.models.KanbanBoard || mongoose.model('KanbanBoard', kanbanBoardSchema);
+
