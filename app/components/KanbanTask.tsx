@@ -10,9 +10,11 @@ interface Task {
 
 interface Props {
   task: Task;
+  onRemove: (taskId: string) => void;
 }
 
-const TaskCard: React.FC<Props> = ({ task }) => {
+
+const TaskCard: React.FC<Props> = ({ task, onRemove }) => {
   const [editMode, setEditMode] = useState(false);
   const [content, setContent] = useState(task.content);
   
@@ -39,18 +41,11 @@ const TaskCard: React.FC<Props> = ({ task }) => {
         if (!response.ok) {
           throw new Error('Failed to update task');
         }
-
-        const updatedTaskData = await response.json();
-        console.log('Task updated successfully', updatedTaskData);
-
-        // Reset edit mode
-        setEditMode(false);
+        console.log('Task updated successfully');
+        setEditMode(false); // Exit edit mode on successful update
       } catch (error) {
         console.error('Error updating task:', error);
       }
-    } else {
-      // If no changes or content is only whitespace, just exit edit mode
-      setEditMode(false);
     }
   };
 
@@ -65,45 +60,53 @@ const TaskCard: React.FC<Props> = ({ task }) => {
       }
 
       console.log('Task deleted successfully');
-      // Consider invoking a callback to remove the task from the parent component's state
+      onRemove(task._id); // Invoke the callback after successful deletion
     } catch (error) {
       console.error('Error deleting task:', error);
     }
   };
-
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className={`task-card ${editMode ? 'edit-mode' : ''}`}
+      className="task-card relative p-2 bg-white rounded shadow cursor-pointer hover:shadow-lg transition-shadow duration-150"
       onMouseEnter={() => setEditMode(true)}
       onMouseLeave={() => setEditMode(false)}
     >
       {editMode ? (
-        <textarea
-          className="task-edit-input"
-          value={content}
-          autoFocus
-          onChange={(e) => setContent(e.target.value)}
-          onBlur={handleUpdateTask}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              handleUpdateTask();
-            }
-          }}
-        />
+        <>
+          <textarea
+            className="w-full h-24 p-2 text-sm border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={content}
+            autoFocus
+            onChange={(e) => setContent(e.target.value)}
+          />
+          <div className="flex justify-end space-x-2">
+            <button
+              className="px-4 py-1 text-sm text-blue-700 bg-blue-100 rounded hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onClick={handleUpdateTask}
+            >
+              Save
+            </button>
+            <button
+              className="px-4 py-1 text-sm text-gray-700 bg-gray-100 rounded hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              onClick={() => setEditMode(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </>
       ) : (
-        <p className="task-content" onDoubleClick={() => setEditMode(true)}>
+        <p className="task-content">
           {content}
         </p>
       )}
 
       <button
         onClick={handleDeleteTask}
-        className="delete-task-button"
+        className="stroke-gray-500 hover:stroke-white focus:stroke-white hover:bg-red-600 focus:bg-red-600 px-1 py-2 rounded transition-all duration-150 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
       >
         <TrashIcon />
       </button>
