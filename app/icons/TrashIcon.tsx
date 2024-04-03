@@ -7,8 +7,8 @@ export default function TrashIcon() {
       fill="none"
       viewBox="0 0 24 24"
       strokeWidth={1.5}
-      stroke="currentColor" // Ensure stroke color is set to make the path visible
-      className="w-6 h-6"
+      stroke="currentColor"
+      className="w-6 h-6 hover:cursor-pointer opacity-80 hover:bg-rose-300 hover:rounded-lg p-0.5"
     >
       <path
         strokeLinecap="round"

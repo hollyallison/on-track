@@ -33,13 +33,12 @@ const ColumnContainer: React.FC<KanbanColumnProps> = ({
     if (over && active.id !== over.id) {
       const oldIndex = tasks.findIndex((task) => task._id === active.id);
       const newIndex = tasks.findIndex((task) => task._id === over.id);
-      // Call a method to update the order in the backend and then refresh the tasks list
     }
   };
 
   const handleAddTaskClick = async () => {
     const newTaskData = {
-      content: "New Task", // Default content for new task
+      content: "New Task", 
       columnId: column._id,
       status: "To Do",
     };
@@ -73,7 +72,7 @@ const ColumnContainer: React.FC<KanbanColumnProps> = ({
           <input
             type="text"
             defaultValue={column.title}
-            onBlur={() => setEditMode(false)} // Update column title logic here
+            onBlur={() => setEditMode(false)} 
             autoFocus
             className="text-xl font-semibold p-2 rounded border-gray-300"
           />
@@ -91,13 +90,13 @@ const ColumnContainer: React.FC<KanbanColumnProps> = ({
         <KanbanTask
           key={task._id}
           task={task}
-          onRemove={() => onTaskRemove(column._id, task._id)} // Pass it as onRemove to TaskCard
+          onRemove={() => onTaskRemove(column._id, task._id)}
         />
       ))}
         </SortableContext>
       </DndContext>
  
-      <button onClick={() => {/* Your delete logic here */}}  className="stroke-gray-500 hover:stroke-white focus:stroke-white hover:bg-red-600 focus:bg-red-600 px-1 py-2 rounded transition-all duration-150 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+      <button onClick={() => {/* add delete*/}}  className="stroke-gray-500 hover:stroke-white focus:stroke-white hover:bg-red-600 focus:bg-red-600 px-1 py-2 rounded transition-all duration-150 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
       <TrashIcon />
     </button>
     </div>

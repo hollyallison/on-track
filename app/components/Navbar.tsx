@@ -19,7 +19,7 @@ export default function Navbar() {
           <Link href="./daily-practice" className="block mt-4 lg:inline-block lg:mt-0 text-black-200 hover:text-fuchsia-500 mr-4">
               Daily Practice
           </Link>
-          <Link href="./my-goals" className="block mt-4 lg:inline-block lg:mt-0 text-black-200 hover:text-white mr-4">
+          <Link href="./Goals" className="block mt-4 lg:inline-block lg:mt-0 text-black-200 hover:text-white mr-4">
               My Goals
           </Link>
           <Link href="./monthly-reflections" className="block mt-4 lg:inline-block lg:mt-0 text-black-200 hover:text-white">

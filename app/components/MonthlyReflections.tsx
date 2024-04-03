@@ -51,17 +51,17 @@ const MonthlyReflection: React.FC = () => {
           'Content-Type': 'application/json',
         },
       });
-      // Consider adding a success feedback mechanism here (e.g., a success message to the user)
+      //  add feedback mechanism - show it's been updated)
     } catch (error) {
       console.log('Reflection submission successful');
       console.error('Failed to submit reflection:', error);
-      // Consider adding an error feedback mechanism here (e.g., an error message to the user)
+      //  add feedback mechanism - an error/unsuccessful message)
     }
   };
 
   const handleSave = async () => {
     await submitReflection();
-    // Implement additional logic if needed upon successful save, such as redirecting the user or showing a success message
+ // link to where the informationis being stored 
   };
 
   const handleCancel = () => {

@@ -1,10 +1,10 @@
-// pages/index.tsx
-
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Calendar from './components/CalendarView';
+import "./globals.css";
+import TaskBoard from './components/TaskBoard';
 
-// ... import other necessary components
+
 
 const Home: NextPage = () => {
   return (
@@ -16,7 +16,7 @@ const Home: NextPage = () => {
       </Head>
       <main className="container mx-auto p-4 space-y-6">
        <Calendar /> 
-        {/* ... other components */}
+       <TaskBoard />
       </main>
     </>
   );
